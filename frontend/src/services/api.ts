@@ -99,17 +99,17 @@ export async function fetchApplications(params?: FetchApplicationsParams): Promi
     res = await fetch(endpoint)
   } catch {
     throw new Error(
-      `Không thể kết nối tới máy chủ backend (${API_BASE_URL}). Vui lòng kiểm tra backend đã được khởi động chưa.`,
+      `Could not connect to the backend server (${API_BASE_URL}). Please make sure the backend is running.`,
     )
   }
 
   if (!res.ok) {
-    let message = `Lỗi máy chủ (${res.status})`
+    let message = `Server error (${res.status})`
     try {
       const data = await res.json()
       if (data?.error) message = data.error
     } catch {
-      // bỏ qua nếu response không phải JSON
+      // ignore if the response is not JSON
     }
     throw new Error(message)
   }
@@ -124,17 +124,17 @@ export async function fetchStats(): Promise<Stats> {
     res = await fetch(`${API_BASE_URL}/stats`)
   } catch {
     throw new Error(
-      `Không thể kết nối tới máy chủ backend (${API_BASE_URL}). Vui lòng kiểm tra backend đã được khởi động chưa.`,
+      `Could not connect to the backend server (${API_BASE_URL}). Please make sure the backend is running.`,
     )
   }
 
   if (!res.ok) {
-    let message = `Lỗi máy chủ (${res.status})`
+    let message = `Server error (${res.status})`
     try {
       const data = await res.json()
       if (data?.error) message = data.error
     } catch {
-      // bỏ qua nếu response không phải JSON
+      // ignore if the response is not JSON
     }
     throw new Error(message)
   }
@@ -161,17 +161,17 @@ export async function createApplication(input: CreateApplicationInput): Promise<
     })
   } catch {
     throw new Error(
-      `Không thể kết nối tới máy chủ backend (${API_BASE_URL}). Vui lòng kiểm tra backend đã được khởi động chưa.`,
+      `Could not connect to the backend server (${API_BASE_URL}). Please make sure the backend is running.`,
     )
   }
 
   if (!res.ok) {
-    let message = `Lỗi khi thêm đơn ứng tuyển (${res.status})`
+    let message = `Failed to create application (${res.status})`
     try {
       const data = await res.json()
       if (data?.error) message = data.error
     } catch {
-      // bỏ qua nếu response không phải JSON
+      // ignore if the response is not JSON
     }
     throw new Error(message)
   }
@@ -186,7 +186,7 @@ export async function updateApplication(
   if (DEMO_MODE) {
     const applications = readDemoApplications()
     const index = applications.findIndex((application) => application.id === id)
-    if (index < 0) throw new Error('Không tìm thấy đơn ứng tuyển')
+    if (index < 0) throw new Error('Application not found')
     const updated = { ...applications[index], ...updates, updatedAt: new Date().toISOString() }
     applications[index] = updated
     writeDemoApplications(applications)
@@ -203,17 +203,17 @@ export async function updateApplication(
     })
   } catch {
     throw new Error(
-      `Không thể kết nối tới máy chủ backend (${API_BASE_URL}). Vui lòng kiểm tra backend đã được khởi động chưa.`,
+      `Could not connect to the backend server (${API_BASE_URL}). Please make sure the backend is running.`,
     )
   }
 
   if (!res.ok) {
-    let message = `Lỗi khi cập nhật trạng thái đơn ứng tuyển (${res.status})`
+    let message = `Failed to update application status (${res.status})`
     try {
       const data = await res.json()
       if (data?.error) message = data.error
     } catch {
-      // bỏ qua nếu response không phải JSON
+      // ignore if the response is not JSON
     }
     throw new Error(message)
   }
@@ -224,7 +224,7 @@ export async function updateApplication(
 export async function deleteApplication(id: number): Promise<void> {
   if (DEMO_MODE) {
     const applications = readDemoApplications()
-    if (!applications.some((application) => application.id === id)) throw new Error('Không tìm thấy đơn ứng tuyển')
+    if (!applications.some((application) => application.id === id)) throw new Error('Application not found')
     writeDemoApplications(applications.filter((application) => application.id !== id))
     return
   }
@@ -235,17 +235,17 @@ export async function deleteApplication(id: number): Promise<void> {
     })
   } catch {
     throw new Error(
-      `Không thể kết nối tới máy chủ backend (${API_BASE_URL}). Vui lòng kiểm tra backend đã được khởi động chưa.`,
+      `Could not connect to the backend server (${API_BASE_URL}). Please make sure the backend is running.`,
     )
   }
 
   if (!res.ok) {
-    let message = `Lỗi khi xoá đơn ứng tuyển (${res.status})`
+    let message = `Failed to delete application (${res.status})`
     try {
       const data = await res.json()
       if (data?.error) message = data.error
     } catch {
-      // bỏ qua nếu response không phải JSON
+      // ignore if the response is not JSON
     }
     throw new Error(message)
   }

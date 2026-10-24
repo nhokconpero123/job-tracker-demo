@@ -9,11 +9,11 @@ import {
 } from './services/api'
 
 const statusOptions: { value: ApplicationStatus; label: string }[] = [
-  { value: 'wishlist', label: 'Wishlist (Quan tâm)' },
-  { value: 'applied', label: 'Applied (Đã ứng tuyển)' },
-  { value: 'interview', label: 'Interview (Phỏng vấn)' },
-  { value: 'offer', label: 'Offer (Nhận đề nghị)' },
-  { value: 'rejected', label: 'Rejected (Đã từ chối)' },
+  { value: 'wishlist', label: 'Wishlist' },
+  { value: 'applied', label: 'Applied' },
+  { value: 'interview', label: 'Interview' },
+  { value: 'offer', label: 'Offer' },
+  { value: 'rejected', label: 'Rejected' },
 ]
 
 const statusBadgeStyles: Record<ApplicationStatus, string> = {
@@ -177,7 +177,7 @@ export function App() {
       if (requestId === latestApplicationsRequest.current && err instanceof Error) {
         setFetchError(err.message)
       } else if (requestId === latestApplicationsRequest.current) {
-        setFetchError('Không thể tải danh sách đơn ứng tuyển.')
+        setFetchError('Could not load applications.')
       }
     } finally {
       if (requestId === latestApplicationsRequest.current) setIsLoading(false)
@@ -208,7 +208,7 @@ export function App() {
       } catch (err) {
         if (!ignore && requestId === latestApplicationsRequest.current) {
           setFetchError(
-            err instanceof Error ? err.message : 'Không thể tải danh sách đơn ứng tuyển.',
+            err instanceof Error ? err.message : 'Could not load applications.',
           )
         }
       } finally {
@@ -230,7 +230,7 @@ export function App() {
     setFormError(null)
 
     if (!company.trim() || !position.trim()) {
-      setFormError('Vui lòng nhập tên công ty và vị trí ứng tuyển.')
+      setFormError('Please enter a company name and job title.')
       return
     }
 
@@ -265,7 +265,7 @@ export function App() {
       if (err instanceof Error) {
         setFormError(err.message)
       } else {
-        setFormError('Có lỗi xảy ra khi tạo đơn ứng tuyển.')
+        setFormError('Something went wrong while creating the application.')
       }
     } finally {
       setIsSubmitting(false)
@@ -288,7 +288,7 @@ export function App() {
       if (err instanceof Error) {
         setActionError(err.message)
       } else {
-        setActionError('Có lỗi xảy ra khi cập nhật trạng thái đơn ứng tuyển.')
+        setActionError('Something went wrong while updating the application status.')
       }
     } finally {
       setUpdatingId(null)
@@ -297,7 +297,7 @@ export function App() {
 
   const handleDelete = async (app: Application) => {
     const confirmed = window.confirm(
-      `Bạn có chắc chắn muốn xoá đơn ứng tuyển tại "${app.company}" (${app.position}) không?`,
+      `Are you sure you want to delete the application for "${app.position}" at ${app.company}?`,
     )
     if (!confirmed) return
 
@@ -311,7 +311,7 @@ export function App() {
       if (err instanceof Error) {
         setActionError(err.message)
       } else {
-        setActionError('Có lỗi xảy ra khi xoá đơn ứng tuyển.')
+        setActionError('Something went wrong while deleting the application.')
       }
     } finally {
       setDeletingId(null)
@@ -346,14 +346,14 @@ export function App() {
       })
       loadStats()
     } catch (err) {
-      // Revert về cột cũ khi gọi API thất bại
+      // Revert to the previous column if the API call fails
       setApplications((prev) =>
         prev.map((app) => (app.id === appId ? { ...app, status: previousStatus } : app)),
       )
       if (err instanceof Error) {
-        setActionError(`Chuyển trạng thái thất bại: ${err.message}`)
+        setActionError(`Status update failed: ${err.message}`)
       } else {
-        setActionError('Có lỗi xảy ra khi chuyển trạng thái đơn ứng tuyển.')
+        setActionError('Something went wrong while changing the application status.')
       }
     } finally {
       setDraggingId(null)
@@ -366,7 +366,7 @@ export function App() {
       <div className="max-w-6xl mx-auto space-y-8">
         {import.meta.env.VITE_DEMO_MODE === 'true' && (
           <p className="text-xs text-slate-500" role="status">
-            Chế độ demo: dữ liệu chỉ lưu trong trình duyệt của bạn
+            Demo mode: your data is stored only in your browser
           </p>
         )}
         {/* Header */}
@@ -377,26 +377,26 @@ export function App() {
                 Job Application Tracker
               </h1>
               <p className="mt-1 text-sm text-slate-500">
-                Theo dõi và quản lý quá trình ứng tuyển công việc
+                Track and manage your job applications
               </p>
             </div>
             <div className="flex flex-col items-end gap-1">
               <span className="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                Tổng số: {stats ? stats.total : applications.length} đơn
+                Total applications: {stats ? stats.total : applications.length}
               </span>
               {statsError && (
                 <span className="text-xs text-amber-700" role="status">
-                  Không tải được thống kê
+                  Could not load statistics
                 </span>
               )}
             </div>
           </div>
         </header>
 
-        {/* Form thêm đơn mới */}
+        {/* New application form */}
         <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-            <span>➕</span> Thêm đơn ứng tuyển mới
+            <span>➕</span> Add a new application
           </h2>
 
           {formError && (
@@ -406,7 +406,7 @@ export function App() {
                 type="button"
                 onClick={() => setFormError(null)}
                 className="text-rose-500 hover:text-rose-700 font-bold ml-2 cursor-pointer"
-                title="Đóng thông báo"
+                title="Dismiss notification"
               >
                 ✕
               </button>
@@ -414,16 +414,16 @@ export function App() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Tên công ty & Vị trí ứng tuyển */}
+            {/* Company name & job title */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-1">
-                  Công ty <span className="text-rose-500">*</span>
+                  Company <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="company"
                   type="text"
-                  placeholder="Ví dụ: Google, VNG, Viettel..."
+                  placeholder="e.g. Google, Acme, Contoso..."
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   disabled={isSubmitting}
@@ -433,12 +433,12 @@ export function App() {
 
               <div>
                 <label htmlFor="position" className="block text-sm font-medium text-slate-700 mb-1">
-                  Vị trí ứng tuyển <span className="text-rose-500">*</span>
+                  Job title <span className="text-rose-500">*</span>
                 </label>
                 <input
                   id="position"
                   type="text"
-                  placeholder="Ví dụ: Frontend Engineer, React Dev..."
+                  placeholder="e.g. Frontend Engineer, React Developer..."
                   value={position}
                   onChange={(e) => setPosition(e.target.value)}
                   disabled={isSubmitting}
@@ -447,11 +447,11 @@ export function App() {
               </div>
             </div>
 
-            {/* Trạng thái, Mức lương & Link tin tuyển dụng */}
+            {/* Status, salary & job listing link */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-1">
-                  Trạng thái <span className="text-rose-500">*</span>
+                  Status <span className="text-rose-500">*</span>
                 </label>
                 <select
                   id="status"
@@ -470,12 +470,12 @@ export function App() {
 
               <div>
                 <label htmlFor="salary" className="block text-sm font-medium text-slate-700 mb-1">
-                  Mức lương (tùy chọn)
+                  Salary (optional)
                 </label>
                 <input
                   id="salary"
                   type="text"
-                  placeholder="Ví dụ: 20-30tr, $1500..."
+                  placeholder="e.g. $80,000–$100,000, $1,500/month..."
                   value={salary}
                   onChange={(e) => setSalary(e.target.value)}
                   disabled={isSubmitting}
@@ -485,7 +485,7 @@ export function App() {
 
               <div>
                 <label htmlFor="url" className="block text-sm font-medium text-slate-700 mb-1">
-                  Link tin tuyển dụng (url)
+                  Job listing URL
                 </label>
                 <input
                   id="url"
@@ -499,11 +499,11 @@ export function App() {
               </div>
             </div>
 
-            {/* Các trường ngày tùy chọn */}
+            {/* Optional dates */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div>
                 <label htmlFor="appliedDate" className="block text-sm font-medium text-slate-700 mb-1">
-                  Ngày nộp (appliedDate)
+                  Application date
                 </label>
                 <input
                   id="appliedDate"
@@ -517,7 +517,7 @@ export function App() {
 
               <div>
                 <label htmlFor="interviewDate" className="block text-sm font-medium text-slate-700 mb-1">
-                  Ngày phỏng vấn (interviewDate)
+                  Interview date
                 </label>
                 <input
                   id="interviewDate"
@@ -531,7 +531,7 @@ export function App() {
 
               <div>
                 <label htmlFor="followUpDate" className="block text-sm font-medium text-slate-700 mb-1">
-                  Ngày follow-up (followUpDate)
+                  Follow-up date
                 </label>
                 <input
                   id="followUpDate"
@@ -544,15 +544,15 @@ export function App() {
               </div>
             </div>
 
-            {/* Ghi chú */}
+            {/* Notes */}
             <div>
               <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-1">
-                Ghi chú (tùy chọn)
+                Notes (optional)
               </label>
               <textarea
                 id="notes"
                 rows={2}
-                placeholder="Ghi chú về vòng phỏng vấn, liên hệ HR, chuẩn bị kỹ năng..."
+                placeholder="Interview details, recruiter contact, preparation notes..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 disabled={isSubmitting}
@@ -572,20 +572,20 @@ export function App() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                     </svg>
-                    Đang lưu...
+                    Saving...
                   </>
                 ) : (
-                  '+ Thêm đơn ứng tuyển'
+                  '+ Add application'
                 )}
               </button>
             </div>
           </form>
         </section>
 
-        {/* Thanh tìm kiếm & Bộ lọc trạng thái (áp dụng cho cả Danh sách và Kanban) */}
+        {/* Search and status filters (apply to both List and Kanban views) */}
         <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
           <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-            {/* Ô tìm kiếm */}
+            {/* Search field */}
             <div className="relative flex-1">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -596,7 +596,7 @@ export function App() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tìm kiếm theo công ty hoặc vị trí..."
+                placeholder="Search by company or job title..."
                 className="w-full rounded-lg border border-slate-300 pl-9 pr-8 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
               />
               {searchQuery && (
@@ -604,17 +604,17 @@ export function App() {
                   type="button"
                   onClick={() => setSearchQuery('')}
                   className="absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
-                  title="Xoá tìm kiếm"
+                  title="Clear search"
                 >
                   ✕
                 </button>
               )}
             </div>
 
-            {/* Bộ lọc theo trạng thái */}
+            {/* Status filter */}
             <div className="flex items-center gap-2">
               <label htmlFor="status-filter" className="text-xs font-medium text-slate-600 whitespace-nowrap">
-                Lọc trạng thái:
+                Filter by status:
               </label>
               <select
                 id="status-filter"
@@ -622,7 +622,7 @@ export function App() {
                 onChange={(e) => setStatusFilter(e.target.value as 'all' | ApplicationStatus)}
                 className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white cursor-pointer"
               >
-                <option value="all">Tất cả trạng thái</option>
+                <option value="all">All statuses</option>
                 {statusOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
@@ -633,20 +633,20 @@ export function App() {
           </div>
         </section>
 
-        {/* Phần hiển thị danh sách / Kanban */}
+        {/* List / Kanban view */}
         <section className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <h2 className="text-lg font-semibold text-slate-900">
-                {viewMode === 'list' ? 'Danh sách đơn ứng tuyển' : 'Bảng Kanban'}
+                {viewMode === 'list' ? 'Applications' : 'Kanban board'}
               </h2>
               <span className="text-xs text-slate-500">
-                (Hiển thị {applications.length} kết quả)
+                (Showing {applications.length} results)
               </span>
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Nút chuyển đổi chế độ xem */}
+              {/* View mode toggle */}
               <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 shadow-sm">
                 <button
                   type="button"
@@ -657,7 +657,7 @@ export function App() {
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  📋 Danh sách
+                  📋 List
                 </button>
                 <button
                   type="button"
@@ -677,9 +677,9 @@ export function App() {
                   type="button"
                   onClick={loadAllData}
                   className="text-xs text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
-                  title="Tải lại dữ liệu"
+                  title="Refresh data"
                 >
-                  🔄 Tải lại
+                  🔄 Refresh
                 </button>
               )}
             </div>
@@ -696,7 +696,7 @@ export function App() {
                 type="button"
                 onClick={() => setActionError(null)}
                 className="text-rose-500 hover:text-rose-700 font-bold ml-2 cursor-pointer"
-                title="Đóng thông báo"
+                title="Dismiss notification"
               >
                 ✕
               </button>
@@ -710,14 +710,14 @@ export function App() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
-                <span>Đang tải dữ liệu...</span>
+                <span>Loading data...</span>
               </div>
             </div>
           ) : fetchError ? (
             <div className="p-5 rounded-xl bg-rose-50 border border-rose-200 text-sm text-rose-700 space-y-3">
               <div className="flex items-center gap-2 font-medium">
                 <span>⚠️</span>
-                <span>Không thể kết nối hoặc tải dữ liệu từ máy chủ API</span>
+                <span>Could not connect to or load data from the API server</span>
               </div>
               <p className="text-rose-600">{fetchError}</p>
               <div>
@@ -726,18 +726,18 @@ export function App() {
                   onClick={loadAllData}
                   className="inline-flex items-center rounded-md bg-rose-600 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-700 cursor-pointer"
                 >
-                  Thử lại
+                  Try again
                 </button>
               </div>
             </div>
           ) : viewMode === 'list' ? (
-            /* Chế độ xem DANH SÁCH */
+            /* List view */
             applications.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
                 <p className="text-slate-500 text-sm">
                   {debouncedQuery || statusFilter !== 'all'
-                    ? 'Không tìm thấy đơn ứng tuyển nào phù hợp với bộ lọc.'
-                    : 'Chưa có đơn ứng tuyển nào. Hãy thêm đơn đầu tiên!'}
+                    ? 'No applications match your filters.'
+                    : 'No applications yet. Add your first one!'}
                 </p>
               </div>
             ) : (
@@ -758,15 +758,15 @@ export function App() {
                           {statusOptions.find((s) => s.value === app.status)?.label || app.status}
                         </span>
 
-                        {/* Nhãn theo ngày follow-up và interview */}
+                        {/* Follow-up and interview date labels */}
                         {isFollowUpDue(app.followUpDate) && (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                            Cần follow-up
+                            Follow-up due
                           </span>
                         )}
                         {isUpcomingInterview(app.interviewDate) && (
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 border border-indigo-300">
-                            Phỏng vấn sắp tới
+                            Upcoming interview
                           </span>
                         )}
                       </div>
@@ -788,18 +788,18 @@ export function App() {
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:text-blue-800 underline truncate max-w-xs inline-flex items-center gap-1"
                           >
-                            🔗 Link tuyển dụng
+                            🔗 Job listing
                           </a>
                         )}
                       </div>
 
-                      {/* Thông tin ngày tháng */}
+                      {/* Date details */}
                       <div className="flex items-center gap-4 flex-wrap text-xs text-slate-500 pt-0.5">
                         {app.appliedDate && (
-                          <span>📅 Ngày nộp: {app.appliedDate}</span>
+                          <span>📅 Applied: {app.appliedDate}</span>
                         )}
                         {app.interviewDate && (
-                          <span>🗓️ Phỏng vấn: {app.interviewDate}</span>
+                          <span>🗓️ Interview: {app.interviewDate}</span>
                         )}
                         {app.followUpDate && (
                           <span>⏰ Follow-up: {app.followUpDate}</span>
@@ -816,15 +816,15 @@ export function App() {
                     <div className="flex flex-col sm:items-end gap-2.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
                       {app.createdAt && (
                         <div className="text-xs text-slate-400">
-                          Ngày tạo: {new Date(app.createdAt).toLocaleDateString('vi-VN')}
+                          Created: {new Date(app.createdAt).toLocaleDateString('en-US')}
                         </div>
                       )}
 
                       <div className="flex items-center gap-2 flex-wrap">
-                        {/* Ô chọn đổi trạng thái */}
+                        {/* Status selector */}
                         <div className="flex items-center gap-1.5">
                           <label htmlFor={`status-${app.id}`} className="text-xs text-slate-500 whitespace-nowrap">
-                            Trạng thái:
+                            Status:
                           </label>
                           <select
                             id={`status-${app.id}`}
@@ -843,13 +843,13 @@ export function App() {
                           </select>
                         </div>
 
-                        {/* Nút xoá */}
+                        {/* Delete button */}
                         <button
                           type="button"
                           onClick={() => handleDelete(app)}
                           disabled={deletingId === app.id || updatingId === app.id}
                           className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-rose-600 hover:text-white hover:bg-rose-600 border border-rose-300 rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                          title="Xoá đơn ứng tuyển"
+                          title="Delete application"
                         >
                           {deletingId === app.id ? (
                             <>
@@ -857,10 +857,10 @@ export function App() {
                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                               </svg>
-                              Đang xoá...
+                              Deleting...
                             </>
                           ) : (
-                            'Xoá'
+                            'Delete'
                           )}
                         </button>
                       </div>
@@ -870,7 +870,7 @@ export function App() {
               </div>
             )
           ) : (
-            /* Chế độ xem KANBAN */
+            /* Kanban view */
             <div className={`flex gap-4 overflow-x-auto pb-4 ${draggingId !== null ? 'select-none' : ''}`}>
               {kanbanColumns.map((col) => {
                 const columnApps = applications.filter((app) => app.status === col.status)
@@ -911,24 +911,24 @@ export function App() {
                         : 'border-transparent'
                     }`}
                   >
-                    {/* Tiêu đề cột & số lượng đơn */}
+                    {/* Column heading & application count */}
                     <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                       <h3 className={`font-semibold text-sm ${col.headerColor}`}>
                         {col.title}
                       </h3>
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${col.badgeBg} ${col.badgeText}`}
-                        title={`Số lượng đơn trạng thái ${col.title}`}
+                        title={`Number of ${col.title} applications`}
                       >
                         {count}
                       </span>
                     </div>
 
-                    {/* Danh sách thẻ đơn ứng tuyển */}
+                    {/* Application cards */}
                     <div className="flex-1 flex flex-col gap-2.5">
                       {columnApps.length === 0 ? (
                         <div className="h-24 flex items-center justify-center rounded-lg border border-dashed border-slate-300 text-xs text-slate-400">
-                          Kéo thả vào đây
+                          Drag and drop here
                         </div>
                       ) : (
                         columnApps.map((app) => (
@@ -959,23 +959,23 @@ export function App() {
                               {app.position}
                             </p>
 
-                            {/* Nhãn theo ngày follow-up và interview */}
+                            {/* Follow-up and interview date labels */}
                             {(isFollowUpDue(app.followUpDate) || isUpcomingInterview(app.interviewDate)) && (
                               <div className="flex items-center gap-1.5 flex-wrap mt-2">
                                 {isFollowUpDue(app.followUpDate) && (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                                    Cần follow-up
+                                    Follow-up due
                                   </span>
                                 )}
                                 {isUpcomingInterview(app.interviewDate) && (
                                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-indigo-100 text-indigo-800 border border-indigo-300">
-                                    Phỏng vấn sắp tới
+                                    Upcoming interview
                                   </span>
                                 )}
                               </div>
                             )}
 
-                            {/* Thông tin phụ ngắn gọn */}
+                            {/* Quick details */}
                             <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-1 text-[11px] text-slate-500">
                               {app.salary && <div>💰 {app.salary}</div>}
                               {app.url && (
@@ -987,15 +987,15 @@ export function App() {
                                     onClick={(e) => e.stopPropagation()}
                                     className="text-blue-600 hover:text-blue-800 underline truncate block"
                                   >
-                                    🔗 Tin tuyển dụng
+                                    🔗 Job listing
                                   </a>
                                 </div>
                               )}
                               {app.interviewDate && (
-                                <div>🗓️ PV: {app.interviewDate}</div>
+                                <div>🗓️ Interview: {app.interviewDate}</div>
                               )}
                               {app.followUpDate && (
-                                <div>⏰ F/U: {app.followUpDate}</div>
+                                <div>⏰ Follow-up: {app.followUpDate}</div>
                               )}
                             </div>
                           </div>
