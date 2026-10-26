@@ -6,6 +6,7 @@ import {
   createApplication,
   updateApplication,
   deleteApplication,
+  resetDemoData,
 } from './services/api'
 
 const statusOptions: { value: ApplicationStatus; label: string }[] = [
@@ -318,6 +319,13 @@ export function App() {
     }
   }
 
+  const handleResetDemoData = async () => {
+    const confirmed = window.confirm('Reset demo data to the original sample applications?')
+    if (!confirmed) return
+    resetDemoData()
+    await loadAllData()
+  }
+
   // HTML5 Drag and Drop handler for Kanban
   const handleCardDrop = async (appId: number, targetStatus: ApplicationStatus) => {
     setDraggingId(null)
@@ -365,9 +373,18 @@ export function App() {
     <div className="min-h-screen bg-slate-50 text-slate-800 antialiased py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8">
         {import.meta.env.VITE_DEMO_MODE === 'true' && (
+          <div className="flex items-center gap-3">
           <p className="text-xs text-slate-500" role="status">
             Demo mode: your data is stored only in your browser
           </p>
+          <button
+            type="button"
+            onClick={handleResetDemoData}
+            className="text-xs font-medium text-blue-700 hover:text-blue-900 underline"
+          >
+            Reset demo data
+          </button>
+          </div>
         )}
         {/* Header */}
         <header className="border-b border-slate-200 pb-5">

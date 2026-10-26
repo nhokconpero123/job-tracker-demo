@@ -76,6 +76,19 @@ function demoStats(applications: Application[]): Stats {
   return { total: applications.length, byStatus }
 }
 
+export function resetDemoData(): void {
+  if (!DEMO_MODE) return
+  memoryApplications = null
+  memoryNextId = null
+  try {
+    window.localStorage.removeItem(DEMO_STORAGE_KEY)
+    window.localStorage.removeItem(DEMO_NEXT_ID_KEY)
+  } catch {
+    // Reset the in-memory demo data even when browser storage is unavailable.
+  }
+  readDemoApplications()
+}
+
 export async function fetchApplications(params?: FetchApplicationsParams): Promise<Application[]> {
   if (DEMO_MODE) {
     const q = params?.q?.trim().toLocaleLowerCase()
